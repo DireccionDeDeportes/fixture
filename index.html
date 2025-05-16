@@ -1,0 +1,36 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de Partidos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "papaparse": "https://cdn.jsdelivr.net/npm/papaparse@5.4.1/+esm"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Fixture Interbarriales Municipalidad de San Luis</h1>
+        
+       <!--  <div class="input-section">
+            <label for="csv-file" class="file-input-label">
+                <span>Cargar archivo CSV</span>
+                <input type="file" id="csv-file" accept=".csv">
+            </label>
+            <div id="file-name"></div>
+        </div>-->
+
+        <div class="matches-container">
+            <h2>Partidos Programados</h2>
+            <div id="matches-list"></div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>

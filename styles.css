@@ -1,0 +1,277 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Baloo 2', 'Lato', sans-serif;
+}
+
+body {
+    background: linear-gradient(-40deg, rgba(0,57,116,1) 10%, rgba(144,191,68,1) 130%);
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #ffffff;
+    font-size: 2.5em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+h2 {
+    color: #003974;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.input-section {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.file-input-label {
+    display: inline-block;
+    background-color: #003974;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.file-input-label:hover {
+    background-color: #90bf44;
+    transform: translateY(-2px);
+}
+
+#file-name {
+    margin-top: 10px;
+    color: white;
+    font-style: italic;
+}
+
+.matches-container {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.match-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+    border: 1px solid rgba(0,57,116,0.1);
+}
+
+.match-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+.match-header {
+    background: linear-gradient(45deg, #003974, #90bf44);
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.date-section {
+    margin-bottom: 40px;
+    background-color: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.date-header {
+    color: #003974;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #90bf44;
+    text-transform: capitalize;
+    font-weight: 600;
+}
+
+.court-section {
+    margin-bottom: 30px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.court-header {
+    color: #003974;
+    font-size: 1.4em;
+    margin-bottom: 20px;
+    padding: 12px;
+    background: linear-gradient(45deg, rgba(0,57,116,0.1), rgba(144,191,68,0.1));
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.match-time {
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.team-name {
+    font-weight: 500;
+    color: #003974;
+    font-size: 1.1em;
+}
+
+.versus {
+    color: #90bf44;
+    font-weight: 600;
+    font-size: 1.2em;
+}
+
+.undated-section {
+    margin-top: 50px;
+    padding: 25px;
+    background-color: rgba(255,255,255,0.9);
+    border-radius: 12px;
+}
+
+.undated-header {
+    color: #003974;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    text-align: center;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        font-size: 1.4em;
+    }
+
+    .matches-container {
+        padding: 15px;
+    }
+
+    .date-section {
+        padding: 15px;
+        margin-bottom: 25px;
+    }
+
+    .date-header {
+        font-size: 1.4em;
+        margin-bottom: 15px;
+    }
+
+    .court-section {
+        padding: 12px;
+        margin-bottom: 20px;
+    }
+
+    .court-header {
+        font-size: 1.2em;
+        padding: 8px;
+        margin-bottom: 15px;
+    }
+
+    .match-card {
+        padding: 15px;
+        margin-bottom: 12px;
+    }
+
+    .match-header {
+        flex-direction: column;
+        padding: 8px;
+    }
+    
+    .match-teams {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .versus {
+        padding: 5px 0;
+    }
+    
+    .team {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+
+    .team-name {
+        font-size: 1em;
+    }
+
+    .file-input-label {
+        padding: 10px 20px;
+        font-size: 0.9em;
+        width: 80%;
+        max-width: 300px;
+    }
+
+    #file-name {
+        font-size: 0.9em;
+        word-break: break-all;
+        padding: 0 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 8px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    .matches-container {
+        padding: 12px;
+    }
+
+    .date-header {
+        font-size: 1.2em;
+    }
+
+    .court-header {
+        font-size: 1.1em;
+    }
+
+    .match-time {
+        font-size: 1em;
+    }
+
+    .team-name {
+        font-size: 0.9em;
+    }
+}
