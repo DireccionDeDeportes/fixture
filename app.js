@@ -181,7 +181,7 @@ function renderMatches(matches) {
     if (matches.withoutDate && matches.withoutDate.length > 0) {
         const undatedSection = document.createElement('div');
         undatedSection.className = 'undated-section';
-        undatedSection.innerHTML = '<h3 class="undated-header">Partidos Sin Fecha Asignada</h3>';
+        undatedSection.innerHTML = '<h3 class="undated-header">Equipos Sin Fecha Asignada</h3>';
 
         Object.entries(matches.withoutDate).forEach(([court, matches]) => {
             const courtSection = document.createElement('div');
