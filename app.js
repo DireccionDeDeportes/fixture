@@ -1,16 +1,13 @@
-import Papa from 'papaparse';
-
 let matchesData = [];
 
-  
- async function cargarJSON(url) {
+async function cargarJSON(url) {
             const respuesta = await fetch(url); // Realiza una solicitud HTTP para el archivo JSON
             const datos = await respuesta.json(); // Analiza la respuesta como JSON
             return datos;
         }   
 
 document.addEventListener('DOMContentLoaded', () => {
-     cargarJSON('output.json')
+    cargarJSON('output.json')
             .then(datos => {
                 // Aquí puedes acceder a los datos del archivo JSON
                
@@ -25,61 +22,50 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => {
                 console.error('Error cargando el JSON:', error);
             });
-    
-   // document.getElementById('csv-file').addEventListener('change', handleFileUpload);
+
+    const savedData = localStorage.getItem('matchesData');
+    if (savedData) {
+        matchesData = JSON.parse(savedData);
+        renderMatches(matchesData);
+    }
 });
 
-function handleFileUpload(event) {
-    const file = event.target.files[0];
-    if (file) {
-        document.getElementById('file-name').textContent = `Archivo: ${file.name}`;
-        
-        Papa.parse(file, {
-            header: true,
-            skipEmptyLines: true,
-            complete: function(results) {
-                if (results.data && results.data.length > 0) {
-                    processCSVData(results.data);
-                }
-            },
-            error: function(error) {
-                console.error('Error al parsear el archivo CSV:', error);
-                alert('Error al procesar el archivo. Por favor, verifica el formato.');
-            }
-        });
-    }
-}
 
-// Modificar la función loadCSVFromText para manejar JSON
+// New function to load JSON data
 function loadJSONData(jsonData) {
     try {
-        if (Array.isArray(jsonData)) {
-            processCSVData(jsonData);
-           // document.getElementById('file-name').textContent = 'Datos JSON cargados';
-        } else {
-            throw new Error('El formato JSON no es válido');
-        }
+        processJSONData(jsonData);
+        //document.getElementById('file-name').textContent = 'Datos JSON cargados';
     } catch (error) {
-        console.error('Error al procesar el JSON:', error);
+        console.error('Error al procesar los datos JSON:', error);
         alert('Error al procesar los datos. Por favor, verifica el formato.');
     }
 }
 
-function processCSVData(data) {
-    const requiredColumns = ['Equipo', 'Celular', 'Fecha y hora', 'Cancha'];
-    const headers = Object.keys(data[0]);
+function processJSONData(data) {
+    const requiredFields = ['Equipo', 'Celular', 'Fecha y hora', 'Cancha', 'categoria'];
     
-    const missingColumns = requiredColumns.filter(col => !headers.includes(col));
-    if (missingColumns.length > 0) {
-        alert(`El archivo no contiene las columnas requeridas: ${missingColumns.join(', ')}`);
+    if (!Array.isArray(data)) {
+        alert('Los datos deben estar en formato de array');
         return;
     }
     
+    if (data.length === 0) {
+        alert('No hay datos para procesar');
+        return;
+    }
+    
+    const missingFields = requiredFields.filter(field => !data[0].hasOwnProperty(field));
+    if (missingFields.length > 0) {
+        alert(`Los datos no contienen los campos requeridos: ${missingFields.join(', ')}`);
+        return;
+    }
+
     const matchesByDate = {};
     const matchesWithoutDate = [];
     
     data.forEach(row => {
-        const matchKey = `${row['Fecha y hora']}_${row['Cancha']}`;
+        const matchKey = `${row['Fecha y hora']}_${row['Cancha']}_${row['categoria']}`;
         
         if (!row['Fecha y hora']) {
             const courtKey = row['Cancha'];
@@ -89,7 +75,8 @@ function processCSVData(data) {
             matchesWithoutDate[courtKey].push({
                 equipo: row['Equipo'],
                 fechaHora: null,
-                cancha: row['Cancha']
+                cancha: row['Cancha'],
+                categoria: row['categoria']
             });
             return;
         }
@@ -101,7 +88,8 @@ function processCSVData(data) {
         matchesByDate[matchKey].push({
             equipo: row['Equipo'],
             fechaHora: row['Fecha y hora'],
-            cancha: row['Cancha']
+            cancha: row['Cancha'],
+            categoria: row['categoria']
         });
     });
     
@@ -119,7 +107,7 @@ function renderMatches(matches) {
     matchesList.innerHTML = '';
     
     if (!matches.withDate?.length && !matches.withoutDate?.length) {
-        matchesList.innerHTML = '<p class="no-matches">No hay partidos para mostrar. Carga un archivo CSV para comenzar.</p>';
+        matchesList.innerHTML = '<p class="no-matches">No hay partidos para mostrar.</p>';
         return;
     }
 
@@ -145,34 +133,47 @@ function renderMatches(matches) {
         dateSection.className = 'date-section';
         dateSection.innerHTML = `<h3 class="date-header">${date}</h3>`;
 
-        const courtMatches = {};
+        // Group matches by category first
+        const categoryMatches = {};
         dateMatches.forEach(match => {
-            const court = match[0].cancha;
-            if (!courtMatches[court]) {
-                courtMatches[court] = [];
+            const category = match[0].categoria;
+            if (!categoryMatches[category]) {
+                categoryMatches[category] = {};
             }
-            courtMatches[court].push(match);
+            const court = match[0].cancha;
+            if (!categoryMatches[category][court]) {
+                categoryMatches[category][court] = [];
+            }
+            categoryMatches[category][court].push(match);
         });
 
-        // Sort matches within each court by time
-        Object.entries(courtMatches).forEach(([court, matches]) => {
-            const courtSection = document.createElement('div');
-            courtSection.className = 'court-section';
-            courtSection.innerHTML = `<h4 class="court-header">Cancha: ${court}</h4>`;
+        // Sort categories alphabetically
+        Object.keys(categoryMatches).sort().forEach(category => {
+            const categorySection = document.createElement('div');
+            categorySection.className = 'category-section';
+            categorySection.innerHTML = `<h4 class="category-header">${category}</h4>`;
 
-            // Sort matches by time
-            matches.sort((a, b) => {
-                const timeA = a[0].fechaHora.split(' ')[1];
-                const timeB = b[0].fechaHora.split(' ')[1];
-                return timeA.localeCompare(timeB);
+            Object.entries(categoryMatches[category]).forEach(([court, matches]) => {
+                const courtSection = document.createElement('div');
+                courtSection.className = 'court-section';
+                courtSection.innerHTML = `<h5 class="court-header">${court}</h5>`;
+
+                // Sort matches by time
+                matches.sort((a, b) => {
+                    const timeA = a[0].fechaHora.split(' ')[1];
+                    const timeB = b[0].fechaHora.split(' ')[1];
+                    return timeA.localeCompare(timeB);
+                });
+
+                matches.forEach(match => {
+                    const matchCard = createMatchCard(match);
+                    courtSection.appendChild(matchCard);
+                });
+
+                categorySection.appendChild(courtSection);
             });
 
-            matches.forEach(match => {
-                const matchCard = createMatchCard(match);
-                courtSection.appendChild(matchCard);
-            });
-
-            dateSection.appendChild(courtSection);
+            dateSection.appendChild(categorySection);
         });
 
         matchesList.appendChild(dateSection);
@@ -181,7 +182,7 @@ function renderMatches(matches) {
     if (matches.withoutDate && matches.withoutDate.length > 0) {
         const undatedSection = document.createElement('div');
         undatedSection.className = 'undated-section';
-        undatedSection.innerHTML = '<h3 class="undated-header">Equipos Sin Fecha Asignada</h3>';
+        undatedSection.innerHTML = '<h3 class="undated-header">Partidos Sin Fecha Asignada</h3>';
 
         Object.entries(matches.withoutDate).forEach(([court, matches]) => {
             const courtSection = document.createElement('div');
@@ -232,12 +233,22 @@ function createMatchCard(match) {
     return matchCard;
 }
 
-function formatDate(dateString) {
-    try {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        const date = new Date(dateString);
-        return date.toLocaleDateString('es-ES', options);
-    } catch (e) {
-        return dateString;
+// Example usage:
+const exampleData = [
+    {
+        "Equipo": "11 REYNAS - B° KENNEDY (SUB-16 F)",
+        "Celular": "2664023142",
+        "Fecha y hora": "18/5/2025 10:20:00",
+        "Cancha": "Cancha N° 5",
+        "categoria": "SUB-16 F"
+    },
+    {
+        "Equipo": "B° SOLIDARIDAD (SUB-16 F)",
+        "Celular": "2664563981",
+        "Fecha y hora": "18/5/2025 9:10:00",
+        "Cancha": "Cancha N° 5",
+        "categoria": "SUB-16 F"
     }
-}
+];
+
+loadJSONData(exampleData);
